@@ -1,0 +1,83 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "typescript/no-explicit-any": "off",
+    "typescript/no-floating-promises": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/model/*/*", "**/shared/*/*", "**/tasks/*/*", "!**/index.js"],
+            "message": "Модуль model, shared или глобальную таску импортируйте через его index.js."
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "node": true
+  },
+  "overrides": [
+    {
+      "files": ["src/shared/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/app/**", "**/model/**", "**/tasks/**", "**/shows/**", "**/favorites/**"],
+                "message": "shared — инфраструктура без бизнес-смысла: она не зависит от app, model, tasks и модулей."
+              },
+              {
+                "group": ["**/shared/*/*", "!**/index.js"],
+                "message": "Другой модуль shared импортируйте через его index.js."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/model/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@nestjs/*", "**/app/**", "**/tasks/**", "**/shows/**", "**/favorites/**"],
+                "message": "model не зависит от фреймворка, тасок и модулей: импортировать можно только shared."
+              },
+              {
+                "group": ["**/shared/*/*", "!**/index.js"],
+                "message": "Модуль shared импортируйте через его index.js."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/**/tasks/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@nestjs/*", "express", "**/*.controller.js", "**/*.module.js", "**/app/**"],
+                "message": "Таска — обычная функция: никакого Nest, HTTP и контроллеров. Со сторами работайте напрямую."
+              },
+              {
+                "group": ["**/model/*/*", "**/shared/*/*", "**/tasks/*/*", "!**/index.js"],
+                "message": "Модуль model, shared или глобальную таску импортируйте через его index.js."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
